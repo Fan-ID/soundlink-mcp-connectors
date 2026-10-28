@@ -1,0 +1,99 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "soundlink",
+  "version": "1.0.0",
+  "description": "Read campaigns, soundlinks, metrics, and wallet balance for a Soundlink organization.",
+  "author": {
+    "name": "Soundlink",
+    "email": "hello@getsoundlink.com"
+  },
+  "homepage": "https://www.getsoundlink.com/docs/mcp-server",
+  "repository": "https://github.com/Fan-ID/soundlink-cursor-plugin",
+  "license": "MIT",
+  "keywords": [
+    "soundlink",
+    "mcp",
+    "campaigns",
+    "music"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Soundlink",
+        "shortDescription": "Music campaign analytics",
+        "longDescription": "Connect your Soundlink organization to explore music campaigns, compare campaign performance and creatives, inspect soundlink metrics, and check your wallet balance. For artists, managers, labels, and music marketing teams. Access is read-only: the plugin cannot create campaigns, change budgets, import videos, or make purchases. Sign in to Soundlink to approve access to one organization.",
+        "category": "Data & Analytics",
+        "defaultPrompt": [
+          "Summarize my Soundlink campaigns.",
+          "Which creatives performed best in my campaign over the last seven days?",
+          "What is my Soundlink wallet balance?"
+        ],
+        "websiteURL": "https://www.getsoundlink.com/docs/mcp-server",
+        "supportURL": "https://intercom.help/Soundlink-Help-Center/en/",
+        "privacyPolicyURL": "https://www.getsoundlink.com/privacy-policy",
+        "termsOfServiceURL": "https://www.getsoundlink.com/terms",
+        "logo": "./assets/soundlink.png",
+        "composerIcon": "./assets/soundlink.png"
+      },
+      "review": {
+        "prompts": [
+          "Summarize my Soundlink campaigns.",
+          "Compare the creatives in my most recently started campaign over the last seven days.",
+          "Show my standalone soundlinks.",
+          "What is my Soundlink wallet balance?"
+        ],
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Setup: sign in to a dedicated review organization with at least two campaigns, one with metrics in the last seven complete days. List the organization\u2019s campaigns.",
+              "prompt": "Show my Soundlink campaigns and their current status.",
+              "tools_triggered": "get_campaigns",
+              "expected_behavior": "List only campaigns returned for the connected organization, preserving names, IDs, and statuses. Follow pagination when needed to satisfy the request; do not invent campaigns."
+            },
+            {
+              "description": "Setup: same review organization, with at least one campaign that has metrics in the last seven complete days. Select its most recently started campaign from returned campaign data.",
+              "prompt": "For my most recently started Soundlink campaign, summarize performance over the last seven complete days.",
+              "tools_triggered": "get_campaigns, get_campaign_metrics_overview",
+              "expected_behavior": "Resolve the campaign from returned data, use its actual campaignId, and request the last seven complete days with explicit startDate and endDate. Summarize only returned metrics, including units and currency where supplied; do not sum daily listeners."
+            },
+            {
+              "description": "Setup: the most recently started campaign has at least two creatives with metrics in the last seven complete days.",
+              "prompt": "Compare the creatives in my most recently started Soundlink campaign over the last seven complete days. Which performed best based on the available data?",
+              "tools_triggered": "get_campaigns, get_campaign_metrics_creatives",
+              "expected_behavior": "Resolve a real campaignId and use explicit startDate and endDate for the last seven complete days. Compare returned creative metrics, state the metric used for ranking, and acknowledge missing data. Do not claim a budget or creative change was made."
+            },
+            {
+              "description": "Setup: the connected review organization has at least one standalone soundlink. Campaign-created soundlinks are outside this tool\u2019s catalog.",
+              "prompt": "Show my standalone Soundlink soundlinks.",
+              "tools_triggered": "get_soundlinks",
+              "expected_behavior": "Show standalone soundlinks from the tool response and follow pagination as needed. Do not claim this list includes campaign-created soundlinks or other organizations\u2019 links."
+            },
+            {
+              "description": "Setup: the review organization has a wallet and wallet:read permission. No wallet mutation is required.",
+              "prompt": "What is my Soundlink wallet balance?",
+              "tools_triggered": "get_wallet",
+              "expected_behavior": "Report the returned balance using the response\u2019s currency and units. Do not claim to top up the wallet, move funds, or make a purchase."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Budget writes are unsupported. Explain the read-only limit without attempting a write or claiming the requested change succeeded.",
+              "prompt": "Double the budget of every active Soundlink campaign now."
+            },
+            {
+              "description": "Video imports and campaign creation are unsupported. Do not attempt an import or creation, and do not fabricate a completed action.",
+              "prompt": "Import a video into Soundlink and use it to launch a new campaign."
+            },
+            {
+              "description": "One connection grants access to one organization. Do not query the connected organization as a substitute or claim access to the other organization. Ask the user to reconnect and consent to the intended organization.",
+              "prompt": "Without reconnecting, show the wallet balance of a different Soundlink organization that I have not connected here."
+            }
+          ]
+        }
+      },
+      "publication": {
+        "release_notes": "Add a ChatGPT and Codex package using Soundlink\u2019s existing remote MCP server and OAuth CIMD. Reuse the shared read-only Soundlink skill while preserving Cursor\u2019s existing API-key configuration."
+      }
+    }
+  }
+}
