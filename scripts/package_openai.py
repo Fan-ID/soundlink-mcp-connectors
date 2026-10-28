@@ -72,5 +72,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(build(args.output_dir.resolve()))
     print("Draft package: review cases have not been run. Public submission also needs")
-    print("publisher/country/commerce confirmation, policy coverage review, a demo video,")
+    print("policy coverage review, a demo video,")
     print("reviewer access, domain verification, host testing, and portal scans.")

@@ -33,7 +33,12 @@
         "privacyPolicyURL": "https://www.getsoundlink.com/privacy-policy",
         "termsOfServiceURL": "https://www.getsoundlink.com/terms",
         "logo": "./assets/soundlink.png",
-        "composerIcon": "./assets/soundlink.png"
+        "composerIcon": "./assets/soundlink.png",
+        "developerName": "Soundlink",
+        "brandColor": "#009669",
+        "brandColorDark": "#00FFB2",
+        "logoDark": "./assets/soundlink.png",
+        "composerIconDark": "./assets/soundlink.png"
       },
       "review": {
         "prompts": [
@@ -89,10 +94,12 @@
               "prompt": "Without reconnecting, show the wallet balance of a different Soundlink organization that I have not connected here."
             }
           ]
-        }
+        },
+        "commerce": false
       },
       "publication": {
-        "release_notes": "Add a ChatGPT and Codex package using Soundlink\u2019s existing remote MCP server and OAuth CIMD. Reuse the shared read-only Soundlink skill while preserving Cursor\u2019s existing API-key configuration."
+        "release_notes": "Add a ChatGPT and Codex package using Soundlink\u2019s existing remote MCP server and OAuth CIMD. Reuse the shared read-only Soundlink skill while preserving Cursor\u2019s existing API-key configuration.",
+        "countries": []
       }
     }
   }
