@@ -1,0 +1,28 @@
+name: OpenAI plugin package
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check package isolation and shared skills
+        run: python3 -m unittest discover -s scripts -p 'test_*.py'
+      - name: Build and inspect OpenAI package
+        run: python3 scripts/package_openai.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: soundlink-openai-draft
+          path: dist/*.zip
+          if-no-files-found: error
